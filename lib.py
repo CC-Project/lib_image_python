@@ -25,6 +25,9 @@ def ImageToHex(image_path):
 def hex_to_bin(hex_string):
     return bin(int(hex_string, 16))[2:]
     
+def bin_to_hex(binary_string):
+    return hex(int(binary_string, 2))
+
 def ImageToBin(directory, image_path):
     C = ImageToHex(directory + '/' + image_path)
     
@@ -42,4 +45,5 @@ def BinToImage(file_path, encode = None):
         pass
     
 def generateImage(binary_code, h, l, comment = ""):
-    pass
+    hexa_code = bin_to_hex(binary_code)
+    C = [hexa_code[6 * i: 6 * (i + 1)] for i in range(len(hexa_code / 6))] # On génère la liste contenant le couleur de chaque pixels
