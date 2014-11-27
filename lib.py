@@ -6,10 +6,14 @@ Created on Wed Nov 19 10:48:11 2014
 """
 
 from PIL import Image
+import glob, os
 
 def rgb_to_hex(rgb):
     return '%02x%02x%02x' % rgb
-    
+
+def hex_to_rgb(hex_word):
+    return tuple(ord(c) for c in hex_word.decode('hex'))
+
 def ImageToHex(image_path):
     im = Image.open(image_path)
     (l, h) = im.size
@@ -23,26 +27,44 @@ def ImageToHex(image_path):
     return C
     
 def hex_to_bin(hex_string):
-    return bin(int(hex_string, 16))[2:]
+    bina = bin(int(hex_string, 16))[2:]
+    while len(bina) != 24:
+        bina = "0" + bina
+        
+    return bina
     
 def bin_to_hex(binary_string):
-    return hex(int(binary_string, 2))
+    hexa = hex(int(binary_string, 2))[2:]
+    while len(hexa) != 6:
+        hexa = "0" + hexa
+        
+    return hexa
 
-def ImageToBin(directory, image_path):
-    C = ImageToHex(directory + '/' + image_path)
+def ImageToBin(image_name):
+    C = ImageToHex("Images/" + image_name)
     
     T = ""
     for h in C:
         T += hex_to_bin(h)
         
-    fichier = open('Files/' + image_path.split('.')[0] + ".txt", "w")
-    fichier.write(T)
+    fichier = open('Files/' + image_name.split('.')[0] + ".txt", "w")
+    fichier.write(T + '\n')
     
-def BinToImage(file_path, encode = None):
-    if encode == None: # Si le fichier n'est pas encode
-        pass
-    if encode == "ham": # Encodage par hamming
-        pass
+def BinToImage(file_name):
+    (l, h) = 300, 447
+    
+    fichier = open('Files/' + file_name + ".txt", "r")
+    C = fichier.read()
+
+    im = Image.new("RGB", (l, h), "white")
+    pix = im.load()
+    
+    for y in range(h):
+        for x in range(l):
+            rang = (y * l + x) * 24
+            pix[x, y] = hex_to_rgb(bin_to_hex(C[rang : rang + 24]))
+        
+    im.save("Images/" + file_name + ".png")
     
 def generateImage(binary_code, h, l, comment = ""):
     hexa_code = bin_to_hex(binary_code)
