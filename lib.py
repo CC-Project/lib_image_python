@@ -12,7 +12,9 @@ def rgb_to_hex(rgb):
     return '%02x%02x%02x' % rgb
 
 def hex_to_rgb(hex_word):
-    return tuple(ord(c) for c in hex_word.decode('hex'))
+    if hex_word != "":
+        return tuple(ord(c) for c in hex_word.decode('hex'))
+    return (0,0,0)
 
 def ImageToHex(image_path):
     im = Image.open(image_path)
@@ -34,11 +36,14 @@ def hex_to_bin(hex_string):
     return bina
     
 def bin_to_hex(binary_string):
-    hexa = hex(int(binary_string, 2))[2:]
-    while len(hexa) != 6:
-        hexa = "0" + hexa
+    if binary_string != "":
+        hexa = hex(int(binary_string, 2))[2:]
         
-    return hexa
+        while len(hexa) != 6:
+            hexa = "0" + hexa
+            
+        return hexa
+    return ""
 
 def ImageToBin(image_name):
     C = ImageToHex("Images/" + image_name)
@@ -51,7 +56,7 @@ def ImageToBin(image_name):
     fichier.write(T + '\n')
     
 def BinToImage(file_name):
-    (l, h) = 300, 447
+    (l, h) = 200, 262
     
     fichier = open('Files/' + file_name + ".txt", "r")
     C = fichier.read()
