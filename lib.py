@@ -7,6 +7,8 @@ Created on Wed Nov 19 10:48:11 2014
 
 from PIL import Image
 import glob, os
+import numpy as np
+import matplotlib.pyplot as pp
 
 def rgb_to_hex(rgb):
     return '%02x%02x%02x' % rgb
@@ -74,3 +76,43 @@ def BinToImage(file_name):
 def generateImage(binary_code, h, l, comment = ""):
     hexa_code = bin_to_hex(binary_code)
     C = [hexa_code[6 * i: 6 * (i + 1)] for i in range(len(hexa_code / 6))] # On génère la liste contenant le couleur de chaque pixels
+    
+    
+# Comparation libarie
+    
+def compare(file_name, pas):
+    fichier = open('Files/' + file_name + ".txt", "r")
+    coded = open('Files/' + file_name + "_CODED" + ".txt", "r")
+    
+    fichier = fichier.read()
+    coded = coded.read()
+    
+    X = []
+    Y = []
+    for i in range(1001)[::pas]:
+        print i
+        decoded_without = open('Files/' + file_name + "_" + str(i) + "_DECODED_NO_C" + ".txt", "r")
+        decoded_with = open('Files/' + file_name + "_" + str(i) + "_DECODED_WITH_C" + ".txt", "r")
+        
+        decoded_without = decoded_without.read()
+        decoded_with = decoded_with.read()
+        
+        nb_error, nb_error_finale = 0., 0.
+        for j in range(len(decoded_with)):
+            if decoded_without[j] != fichier[j]:
+                nb_error += 1
+            if decoded_with[j] != fichier[j]:
+                nb_error_finale += 1
+        
+        if nb_error != 0:
+            X.append(i)
+            Y.append(float(nb_error_finale * 1000. / nb_error))
+            
+        print "Nb Error : " + str(nb_error)
+    print X,Y
+    
+    pp.plot(X,Y)
+    plt.xlabel("Taux d'erreur (en %.)")
+    plt.ylabel("Taux d'erreur final (en %.)")
+    
+        
