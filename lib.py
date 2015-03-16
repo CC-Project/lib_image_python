@@ -7,7 +7,6 @@ Created on Wed Nov 19 10:48:11 2014
 
 from PIL import Image
 import glob, os
-import numpy as np
 import matplotlib.pyplot as pp
 
 def rgb_to_hex(rgb):
@@ -56,7 +55,7 @@ def ImageToBin(image_name):
         
     fichier = open('Files/' + image_name.split('.')[0] + ".txt", "w")
     fichier.write(T + '\n')
-    
+
 def BinToImage(file_name):
     (l, h) = 200, 262
     
