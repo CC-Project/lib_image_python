@@ -56,9 +56,7 @@ def ImageToBin(image_name):
     fichier = open('Files/' + image_name.split('.')[0] + ".txt", "w")
     fichier.write(T + '\n')
 
-def BinToImage(file_name):
-    (l, h) = 200, 262
-    
+def BinToImage(file_name, l, h): 
     fichier = open('Files/' + file_name + ".txt", "r")
     C = fichier.read()
 
@@ -114,4 +112,52 @@ def compare(file_name, pas):
     plt.xlabel("Taux d'erreur (en %.)")
     plt.ylabel("Taux d'erreur final (en %.)")
     
+
+# BLACK AND WHITE IMAGES
+
+def ImageToHex_BW(image_path):
+    im = Image.open(image_path)
+    (l, h) = im.size
+    C = []
+    
+    for y in range(h):
+        for x in range(l):
+            color = Image.Image.getpixel(im, (x, y))
+            C.append(rgb_to_hex(color)[0:2])
+            
+    return C
+
+def hex_to_bin_BW(hex_string):
+    bina = bin(int(hex_string, 16))[2:]
+    while len(bina) != 8:
+        bina = "0" + bina
+
+    return bina
+
+def ImageToBin_BW(image_name): # Block and white images
+    C = ImageToHex_BW("Images/" + image_name)
+    
+    T = ""
+    for h in C:
+        T += hex_to_bin_BW(h)
         
+    fichier = open('Files/' + image_name.split('.')[0] + ".txt", "w")
+    fichier.write(T + '\n')
+    
+def generate_comparation_BW(file_name_image_ref, file_name_image_satured, l, h):
+    file_image_ref = open('Files/' + file_name_image_ref + ".txt", "r")
+    file_image_corrupted = open('Files/' + file_name_image_satured + ".txt", "r")
+    
+    C1, C2 = file_image_ref.read(), file_image_corrupted.read()
+
+    im = Image.new("RGB", (l, h), "white")
+    pix = im.load()
+    
+    for y in range(h):
+        for x in range(l):
+            rang = (y * l + x) * 8
+            pix[x, y] = (255,0,0) if C1[rang : rang + 8] != C2[rang : rang + 8] else hex_to_rgb(bin_to_hex(C2[rang : rang + 8]*3))
+        
+    im.save("Images/COMPARED_" + file_name_image_satured + ".png")
+    
+    
